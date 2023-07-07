@@ -1,0 +1,55 @@
+<!doctype html>
+<script src="code/chapter/16_game.js"></script>
+<script src="code/levels.js"></script>
+<script src="code/chapter/17_canvas.js"></script>
+
+<canvas width="1000" height="1000"></canvas>
+<script>
+  let cx = document.querySelector("canvas").getContext("2d");
+
+  // Your code here.
+  function branch(length, angle, scale, steps, prevPoint, point) {
+    
+    
+    cx.beginPath();
+    cx.moveTo(prevPoint.x, prevPoint.y);
+    cx.lineTo(point.x, point.y);
+    cx.stroke();
+    
+    if(steps != 0) {
+    
+        let lineAngle = Math.atan((point.y - prevPoint.y) / (point.x - prevPoint.x));
+      
+      	if(point.x - prevPoint.x < 0) lineAngle += Math.PI;
+      
+      	//if(point.x == prevPoint.x) lineAngle = Math.PI / 2;
+
+        let nextPointA = {x: length*Math.cos(lineAngle + angle) + point.x,
+                          y: length*Math.sin(lineAngle + angle) + point.y};
+
+        let nextPointB = {x: length*Math.cos(lineAngle - angle) + point.x,
+                          y: length*Math.sin(lineAngle - angle) + point.y};
+      
+      	
+      
+      	//console.log(`Step: ${steps}, lineAngle: ${lineAngle}, point: ${point.x}, ${point.y}, prevPoint: ${prevPoint.x}, ${prevPoint.y}`);
+    
+    	branch(length*scale, angle, scale, steps - 1, point, nextPointA);
+      	branch(length*scale, angle, scale, steps - 1, point, nextPointB);
+    }
+  }
+  let point = {x: 300, y: 0};
+  let nextPoint = {x: 300, y: 100};
+  
+  let i = 1;
+  
+  let a = window.setInterval(animate, 50);
+  
+  function animate() {
+    cx.clearRect(0,0,1000,1000);
+  	branch(100,Math.PI / i, .7, 10, point, nextPoint);
+    i += 0.001;
+    if(i > 1) window.clearInterval(a);
+  }
+  
+</script>

@@ -1,0 +1,90 @@
+<!doctype html>
+<script src="code/chapter/16_game.js"></script>
+<script src="code/levels.js"></script>
+<script src="code/chapter/17_canvas.js"></script>
+
+<canvas width="400" height="400"></canvas>
+<script>
+  let cx = document.querySelector("canvas").getContext("2d");
+
+  let lastTime = null;
+  function frame(time) {
+    if (lastTime != null) {
+      updateAnimation(Math.min(100, time - lastTime) / 1000);
+    }
+    lastTime = time;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  class ball {
+    constructor(speed, pos, radius) {
+    	this.dir = Math.random() * Math.PI * 2;
+      	this.speed = speed;
+      	this.pos = pos;
+      	this.radius = radius;
+    }
+  }
+  
+  function dist(a, b) {
+  	
+  	return Math.sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+  }
+  
+  let balls = [];
+  
+  for(; balls.length < 50;) {
+  	let pos = {x: Math.random()*200 + 100, y: Math.random()*200 + 100};
+    let passes = true;
+    for(let b of balls) {
+    	if(dist(b.pos, pos) < 20) passes = false;
+    }
+    if(passes) balls.push(new ball(5, pos, 10));
+  }
+  
+  function updateAnimation(step) {
+    
+    // Your code here.
+    cx.clearRect(0,0, 1000, 1000);
+    cx.strokeRect(100, 100, 200, 200);
+    for(let b of balls) {
+      
+      
+      
+      if(b.pos.x + b.radius > 300) {
+          b.pos.x = 300 - b.radius;
+          b.dir = Math.PI - b.dir;
+      }
+      if(b.pos.x - b.radius < 100) {
+          b.pos.x = 100 + b.radius;
+          b.dir = Math.PI - b.dir;
+      }
+      if(b.pos.y + b.radius > 300) {
+          b.pos.y = 300 - b.radius;
+          b.dir = 2*Math.PI - b.dir;
+      }
+      if(b.pos.y - b.radius < 100) {
+          b.pos.y = 100 + b.radius;
+          b.dir = 2*Math.PI - b.dir;
+      }
+      for(let o of balls) {
+      	if(o != b && dist(o.pos, b.pos) < o.radius + b.radius) {
+        	let save = o.dir;
+          	o.dir = b.dir;
+          	b.dir = save;
+        }
+      }
+           
+		
+      
+      cx.beginPath();
+      cx.arc(b.pos.x, b.pos.y, b.radius, 0, 7);
+      cx.stroke();
+      
+      b.pos.x += b.speed*Math.cos(b.dir);
+      b.pos.y += b.speed*Math.sin(b.dir);
+    }
+    
+    
+  }
+</script>

@@ -1,0 +1,62 @@
+<!doctype html>
+<script src="code/chapter/18_http.js"></script>
+
+<div id="grid"></div>
+<button id="next">Next generation</button>
+
+<script>
+  // Your code here.
+  let btn = document.getElementById("next");
+  let grid = document.getElementById("grid");
+  grid.style.width = 500 + "px";
+  
+  let cells = [];
+  for(let i = 0; i < 20; i++) {
+    let row = [];
+    for(let j = 0; j < 25; j++) {
+      let val = document.createElement("input");
+      val.type = "checkbox";  
+      grid.appendChild(val);
+      var random_boolean = Math.random() < 0.5;
+      val.checked = random_boolean;
+      row.push(val);
+    }
+    cells.push(row);
+  }
+  
+  btn.addEventListener("click", nextGen);
+  
+  function nextGen() {
+  	
+    
+  	let width = cells[0].length;
+    let height = cells.length;
+    let neighbors = [[0,1],[0,-1],[1,0],[-1,0],[1,-1],[-1,1],[1,1],[-1,-1]];
+    let copyCells = [];
+    for(let i = 0; i < height; i++) {
+      let row = [];
+    	for(let j = 0; j < width; j++) {
+          row.push(cells[i][j].checked);
+        }
+      copyCells.push(row);
+    }
+    
+    for(let i = 0; i < width; i++) {
+    	for(let j = 0; j < height; j++) {
+          
+        	let aliveNeighbors = 0;
+          	for(let n of neighbors) {
+              
+              	if(j+n[1] >= 20 || j+n[1] < 0) continue;
+              	if(i+n[0] >= 25 || i+n[0] < 0) continue;
+            	if(copyCells[j+n[1]][i+n[0]]) {
+                	aliveNeighbors++;
+                }
+            }
+          	if(aliveNeighbors > 3 || aliveNeighbors < 2) cells[j][i].checked = false;
+          	else if(aliveNeighbors == 3 && !copyCells[j][i]) cells[j][i].checked = true;
+       
+        }
+    }
+  }
+</script>
